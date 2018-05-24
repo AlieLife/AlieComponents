@@ -1,8 +1,8 @@
 /**
  * Created by Admin on 2018/5/22.
  */
-import TestButton from './components/testButtton';
+import InputCalendar from './components/InputCalendar/Calendar'
 
 module.exports = {
-    TestButton
-}
+    InputCalendar
+};

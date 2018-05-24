@@ -1,0 +1,219 @@
+.calendarBox{
+    position: relative;
+    padding-top: 3px;
+    height: 40px;
+}
+.calendarBox .calendarBoxWrapper{
+    display: inline-block;
+    box-sizing: border-box;
+    width:180px;
+    height:32px;
+    margin:0;
+    padding:0;
+    position:relative;
+}
+.calendarBox .calendarBoxWrapper .datePicked{
+    box-sizing: border-box;
+    width:100%;
+    height:32px;
+    line-height: 32px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 0 11px;
+    transition: all .3s;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    outline: none;
+    position:absolute;
+    left:0;
+    top:0;
+}
+.calendarBox .calendarBoxWrapper .datePicked:hover{
+    border-color: #40a9ff;
+}
+.datePicked:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #BFBFBF!important;
+}
+.datePicked::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #BFBFBF!important;
+}
+input.datePicked:-ms-input-placeholder{
+    color: #BFBFBF!important;
+}
+input.datePicked::-webkit-input-placeholder{
+    color: #BFBFBF!important;
+}
+.calendarBox .calendarBoxWrapper .calendarIcon{
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    right: 12px;
+    top: 50%;
+    margin-top: -7px;
+    line-height: 14px;
+    font-size: 15px;
+    color:rgba(0, 0, 0, 0.25);
+    transition: all .3s;
+}
+.main{
+    box-sizing: border-box;
+    border:1px solid #e8e8e8;
+    width:280px;
+    font-family: "Monospaced Number", "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius:4px;
+    transition: height 1s;
+    position:absolute;
+    left:0;
+    top:0;
+    z-index: 1050;
+    background: #fff;
+}
+.main .calendarMain{
+    box-sizing: border-box;
+    width:100%;
+    text-align:center;
+    padding:8px 12px;
+    font-size: 15px;
+    transition: all 1s
+}
+.main .calendarMain .allDayWrapper tbody td:hover,
+.calendarMain .allMonthWrapper td a:hover,
+.calendarMain .allYearWrapper td a:hover,
+.calendarMain .allMoreYearWrapper td a:hover{
+    cursor:pointer;
+    background: #e6f7ff;
+    border-radius:2px;
+    color:#40a9ff;
+    transition: background 0.5s
+}
+.calendarMain thead{
+    font-size: 16px;
+
+}
+.calendarMain .allDayWrapper tr{
+    height:32px;
+    line-height: 32px;
+}
+.calendarMain .allDayWrapper td,.calendarMain .allDayWrapper thead td{
+    display: inline-block;
+    margin: 0 6px;
+    color: rgba(0, 0, 0, 0.65);
+    border-radius: 2px;
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+    border: 1px solid transparent;
+    padding: 0!important;
+    background: transparent;
+    text-align: center;
+    transition: background 0.3s ease;
+}
+.main .calendarHeader{
+    box-sizing: border-box;
+    height:40px;
+    line-height: 40px;
+    border-top:1px solid #E8E8E8;
+    border-bottom:1px solid #E8E8E8;
+    width:100%;
+}
+.calendarHeader .calendarWrapper{
+    display:inline-block;
+    box-sizing: border-box;
+    width:100%;
+    margin:0;
+    padding:0;
+    text-align: center;
+}
+.calendarHeader .dateInfo{
+    padding:0 2px;
+    color:rgba(0, 0, 0, 0.85)
+}
+.calendarHeader .allYearInfo{
+    padding:0 2px;
+    color:rgba(0, 0, 0, 0.85);
+    cursor:default;
+}
+.calendarHeader .prev{
+    float:left;
+}
+.calendarHeader .next{
+    float:right;
+}
+.calendarHeader .next,.calendarHeader .prev{
+    color: rgba(0, 0, 0, 0.45);
+    font-family: "Monospaced Number", "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 0 5px;
+    display: inline-block;
+    line-height: 40px;
+    font-size: 12px;
+}
+.calendarHeader .next:hover,.calendarHeader .prev:hover,.calendarHeader .dateInfo:hover{
+    cursor:pointer;
+    color: rgba(24,144,255,0.9);
+    transition: color 0.5s
+}
+.allDayWrapper td.prevMonth,.allDayWrapper td.nextMonth{
+    color: rgba(0, 0, 0, 0.25);
+}
+.main .calendarInput{
+    box-sizing: border-box;
+    width:99%;
+    height:32px;
+    line-height: 32px;
+    border-left:none;
+    border-right:none;
+    border-top:1px solid transparent;
+    border-bottom:1px solid transparent;
+    outline:none;
+    padding: 0 10px;
+    margin-left:1px;
+}
+.calendarMain .allDayWrapper .selectedDay.thisMonth,
+.calendarMain .allMonthWrapper .selectedTodayMonth,
+.calendarMain .allYearWrapper .selectedTodayYear,
+.calendarMain .allMoreYearWrapper .selectedTodayYear,
+.calendarMain .allDayWrapper .selectedDay.thisMonth:hover,
+.calendarMain .allMonthWrapper .selectedTodayMonth:hover,
+.calendarMain .allYearWrapper .selectedTodayYear:hover,
+.calendarMain .allMoreYearWrapper .selectedTodayYear:hover{
+    background:#1890FF;
+    color:#fff;
+    cursor:pointer;border-radius:2px;
+}
+.calendarMain .allDayWrapper .today,.calendarMain .allDayWrapper .today:hover{
+    border:1px solid #1890FF;
+    color:#1890FF;
+}
+.calendarMain .allMonthWrapper,.calendarMain .allYearWrapper,.calendarMain .allMoreYearWrapper{
+    width:100%;
+}
+.calendarMain .allMonthWrapper td,.calendarMain .allYearWrapper td{
+    box-sizing: border-box;
+    width:33.33%;
+    padding:9px 0;
+}
+.calendarMain .allMoreYearWrapper td{
+    box-sizing: border-box;
+    width:33.33%;
+    padding:9px 0;
+}
+.calendarMain .allMonthWrapper td a,
+.calendarMain .allYearWrapper td a{
+    display:inline-block;
+    width:60px;
+    padding:0;
+    color:rgba(0, 0, 0, 0.65);
+}
+.calendarMain .allMoreYearWrapper td a{
+    font-size:14px;
+    color:rgba(0, 0, 0, 0.65);
+    padding:6px;
+}
+.calendarMain .allYearWrapper .previousYearList,
+.calendarMain .allYearWrapper .nextYearList,
+.calendarMain .allMoreYearWrapper .previousYearList,
+.calendarMain .allMoreYearWrapper .nextYearList{
+    color:rgba(0, 0, 0, 0.4);
+}
