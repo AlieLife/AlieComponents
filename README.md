@@ -14,7 +14,7 @@
 #components
 <code>
     InputCalendar：带有输入框的日期选择组件
-        * value：日期值 
+        * value：日期值 YYYY-MM-DD
         * style：样式
         * placeholder：提示
         * onChange：方法

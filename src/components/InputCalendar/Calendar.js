@@ -3,6 +3,7 @@ import CalendarHeader from './CalendarHeader'
 import CalendarMain from './CalendarMain'
 import { Icon } from 'antd';
 import  '../../../dist/Calendar.css';
+import $ from "jquery"
 // import CalendarFooter from './CalendarFooter'
 
 const displayDaysPerMonth = (year)=> {
@@ -54,7 +55,7 @@ const displayDaysPerMonth = (year)=> {
     return returnData
 };
 let _isShowPan=false;
-//value,placeholder,style,onChange
+let _iconState = true;
 export default class Calendar extends React.Component {
     constructor(props) {
         //继承React.Component
@@ -255,6 +256,14 @@ export default class Calendar extends React.Component {
     //切换日期选择器是否显示
     datePickerToggle() {
         let copySelectedDay=this.state.copySelectedDay;
+        if(this.state.copySelectedDay==""){
+            if(this.state.selectedDay!=""){
+                _iconState = false;
+            }else {
+                _iconState = true;
+            }
+            this.setState({copySelectedDay:this.state.selectedDay})
+        }
         if(!this.state.selectedDay){
             this.setState({selectedDay:copySelectedDay})
         }
@@ -271,10 +280,17 @@ export default class Calendar extends React.Component {
             });
         }
     }
-    //标记日期已经选择
-    picked() {
-        this.setState({picked:true})
+    clearValue(){
+        if(!_iconState){
+            _iconState = true;
+            this.setState({copySelectedDay:""});
+            this.props.onChange?this.props.onChange(""):null
+        }
     }
+    //标记日期已经选择
+    // picked() {
+    //     this.setState({picked:true})
+    // }
     inputChangeValue(e){
         let value=e.target.value.replace(/[^\d]/g,'') ;
         let newValue=value.substring(0, 9);
@@ -333,13 +349,17 @@ export default class Calendar extends React.Component {
                         selectedDay:newValue,
                         copySelectedDay:newValue
                     });
+                    if(newValue!=""){
+                        _iconState = false;
+                    }else {
+                        _iconState = true;
+                    }
                     this.props.onChange?this.props.onChange(newValue):null
                 }
             }
         }else{
             this.setState({selectedDay:newValue})
         }
-
     }
     changeShowPan(){
         let that=this;
@@ -347,7 +367,6 @@ export default class Calendar extends React.Component {
             if(_isShowPan){
                 let classnames=e.toElement?e.toElement.getAttribute("class"):(e.srcElement?e.srcElement.className:e.target.className);
                 let targetNode=e.target?(e.target.tagName?e.target.tagName:e.target.nodeName):e.srcElement.nodeName;
-                console.log(targetNode);
                 if(classnames && classnames.indexOf("canClicked")>-1){
                     return false
                 }else if(targetNode==="TD" || targetNode === "TR"){
@@ -362,11 +381,35 @@ export default class Calendar extends React.Component {
     componentDidMount() {
         let changeShowPan=this.changeShowPan();
         document.getElementsByTagName('body')[0].addEventListener('click',changeShowPan, false);
+        $(".calendarBoxWrapper").hover(function (event) {
+            if(!_iconState){
+                $(".calendarIcon").removeClass("anticon-calendar").addClass("anticon-cross-circle");
+                $(".calendarIcon").css("cursor","pointer");
+            }
+        },function (event) {
+            $(".calendarIcon").addClass("anticon-calendar").removeClass("anticon-cross-circle");
+            $(".calendarIcon").css("cursor","initial");
+        })
+    }
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.value==""){
+            if(nextProps.value!=""){
+                _iconState = false;
+            }else {
+                _iconState = true;
+            }
+            this.setState({copySelectedDay:nextProps.value});
+        }
     }
     formatDay(day,month,year){
         let newMonth=(month + 1)<10?"0"+(month + 1):(month + 1);
         let newDay=day<10?"0"+day:day;
         let selectedDay = `${year}-${newMonth}-${newDay}`;
+        if(selectedDay!=""){
+            _iconState = false;
+        }else {
+            _iconState = true;
+        }
         this.setState({copySelectedDay:selectedDay});
         this.props.onChange?this.props.onChange(selectedDay):null;
         return selectedDay
@@ -428,7 +471,7 @@ export default class Calendar extends React.Component {
         if(this.state.isShowPan){
             html= (
                 <div className="main canClicked" style={{height:"330px"}}>
-                    <input ref="cInput" className="calendarInput canClicked" placeholder={this.state.copySelectedDay} value={this.state.selectedDay} onChange={(e)=>this.inputChangeValue(e)}/>
+                    <input ref="cInput" className="calendarInput canClicked" placeholder={this.state.placeholder} value={this.state.selectedDay} onChange={(e)=>this.inputChangeValue(e)}/>
                     <CalendarHeader
                         prevMonth={this.prevMonth.bind(this)}
                         prevYear={this.prevYear.bind(this)}
@@ -475,7 +518,9 @@ export default class Calendar extends React.Component {
             <div className="calendarBox">
                 <p className="calendarBoxWrapper" style={this.props.style}>
                     <input ref='dCa' className="datePicked canClicked" placeholder={this.props.placeholder?this.props.placeholder:''} onClick={this.datePickerToggle.bind(this)} value={this.state.copySelectedDay} />
-                    <Icon type="calendar" className="calendarIcon" />
+                    <span onClick={this.clearValue.bind(this)}>
+                        <Icon type="calendar" className="calendarIcon"/>
+                    </span>
                 </p>
                 {html}
             </div>
