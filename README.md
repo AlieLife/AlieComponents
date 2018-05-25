@@ -1,18 +1,13 @@
 # AlieComponents
-基于react的前端框架，参考 antd
+    基于react的前端框架，参考 antd
 
 ##install:
-<code>
     npm install aliecomponents
-</code>
 
 ##版本:
-<code> 
     aliecomponents@1.0.10 
-</code>
 
 #components
-<code>
     PC端组件：
         1、InputCalendar：带有输入框的日期选择组件
             * value：日期值 YYYY-MM-DD
@@ -36,4 +31,3 @@
         12、formatDate：日期格式化 yyyy-MM-dd，参数：date
         13、matchInput：输入框格式处理 type 1：正整数 2：2位小数 3：中文 数字 字母 #  4：中文 数字 字母  5：字母 6：中文 7：字母 数字 8：中文 字母
                        9：中文 数字，参数：str,type
-</code>
