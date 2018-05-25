@@ -13,9 +13,12 @@
 
 #components
 <code>
-    InputCalendar：带有输入框的日期选择组件
-        * value：日期值 YYYY-MM-DD
-        * style：样式
-        * placeholder：提示
-        * onChange：方法
+    PC端组件：
+        1、InputCalendar：带有输入框的日期选择组件
+            * value：日期值 YYYY-MM-DD
+            * style：样式
+            * placeholder：提示
+            * onChange：方法
+    移动端组件：
+        1、
 </code>
