@@ -1,13 +1,13 @@
-# AlieComponents
+## AlieComponents
     基于react的前端框架，参考 antd
 
-##install:
+## install:
     npm install aliecomponents
 
-##版本:
+## 版本:
     aliecomponents@1.0.10 
 
-#components
+## components
     PC端组件：
         1、InputCalendar：带有输入框的日期选择组件
             * value：日期值 YYYY-MM-DD
