@@ -293,42 +293,35 @@ export default class Calendar extends React.Component {
     // }
     inputChangeValue(e){
         let value=e.target.value.replace(/[^\d]/g,'') ;
-        let newValue=value.substring(0, 9);
+        let newValue=value.substring(0, 8);
         if(value.length===5){
-            if(newValue.substring(4,5)!= 0){
-                newValue=newValue.substring(0, 4) + "-0"+newValue.substring(4,5)
-            }else{
-                newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,5)
-            }
-
+            newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,5)
         }
         if(value.length===6){
-            newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)
-        }
-        if(value.length===7){
-            if(newValue.substring(4,5)==="0"){
-                let numberValue=parseInt(newValue.substring(5,7));
-                if(numberValue<13 && numberValue>9){
-                    newValue=newValue.substring(0, 4) + "-" +newValue.substring(5,7)
-                }else if(newValue.substring(6,7)==="0"){
-                    newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)
-                }else{
-                    newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-0"+newValue.substring(6,7)
-                }
-
+            if(newValue.substring(4,5) === "0" && newValue.substring(5,6) === "0"){
+                newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,5)
             }else{
-                if(newValue.substring(6,7)==="0"){
-                    newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)
+                if(newValue.substring(4,6)>12){
+                    console.log("大于",newValue.substring(4,6));
+                    newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,5)
                 }else{
-                    newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-0"+newValue.substring(6,7)
+                    newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)
                 }
             }
         }
+        if(value.length===7){
+            newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-"+newValue.substring(6,7)
+        }
         if(value.length===8){
-            newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-"+newValue.substring(6,8)
+            if(newValue.substring(6,7) ==="0" && newValue.substring(7,8) ==="0"){
+                newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-"+newValue.substring(6,7)
+            }else{
+                newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-"+newValue.substring(6,8)
+            }
+
         }
         if(value.length===9){
-            newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-"+newValue.substring(7,9)
+            newValue=newValue.substring(0, 4) + "-" +newValue.substring(4,6)+ "-"+newValue.substring(6,8)
         }
         if(newValue.replace(/[^\d]/g,'').length===8){
             let newYear=parseInt(newValue.replace(/[^\d]/g,'').substring(0, 4));
@@ -374,6 +367,35 @@ export default class Calendar extends React.Component {
                 }else{
                     that.setState({isShowPan:false});
                     _isShowPan=false;
+                    let newValue=that.state.selectedDay;
+                    if(newValue.replace(/[^\d]/g,'').length===8){
+                        let newYear=parseInt(newValue.replace(/[^\d]/g,'').substring(0, 4));
+                        let newMonth=parseInt(newValue.replace(/[^\d]/g,'').substring(4, 6));
+                        let newDay=parseInt(newValue.replace(/[^\d]/g,'').substring(6, 8));
+                        let daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                        if ((newYear % 4 === 0 && newYear % 100 !== 0) || newYear % 400 === 0) {
+                            daysInMonth[1] = 29
+                        }
+                        if(newMonth<13){
+                            if(newDay>daysInMonth[newMonth-1]){
+
+                            }else{
+                                that.setState({
+                                    year: newYear,
+                                    month: newMonth-1,
+                                    day:newDay,
+                                    selectedDay:newValue,
+                                    copySelectedDay:newValue
+                                });
+                                if(newValue!=""){
+                                    _iconState = false;
+                                }else {
+                                    _iconState = true;
+                                }
+                                that.props.onChange?that.props.onChange(newValue):null
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -393,24 +415,24 @@ export default class Calendar extends React.Component {
     }
     componentWillReceiveProps(nextProps) {
         if(nextProps.value==""){
+            this.setState({copySelectedDay:nextProps.value});
             if(nextProps.value!=""){
                 _iconState = false;
             }else {
                 _iconState = true;
             }
-            this.setState({copySelectedDay:nextProps.value});
         }
     }
     formatDay(day,month,year){
         let newMonth=(month + 1)<10?"0"+(month + 1):(month + 1);
         let newDay=day<10?"0"+day:day;
         let selectedDay = `${year}-${newMonth}-${newDay}`;
+        this.setState({copySelectedDay:selectedDay});
         if(selectedDay!=""){
             _iconState = false;
         }else {
             _iconState = true;
         }
-        this.setState({copySelectedDay:selectedDay});
         this.props.onChange?this.props.onChange(selectedDay):null;
         return selectedDay
     }
