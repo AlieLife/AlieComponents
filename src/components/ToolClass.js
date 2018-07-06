@@ -9,24 +9,41 @@ ToolClass.lanPath = (url,path,method,request,receive,handleFun,postType,postData
         case "GET":
             return dispatch => {
                 dispatch(request(path));
-                return ToolClass._fetch(fetch(url,{
-                    method: method,
-                    mode: "cors"
-                }),30000)
-                    .then(function(e){
-                        return e.json();
-                    })
-                    .then(function(json){
-                        if(handleFun && handleFun!=""){
-                            json =  handleFun(json);
+                if(!self.__disableNativeFetch && self.fetch) {
+                    return ToolClass._fetch(fetch(url,{
+                        method: method,
+                        mode: "cors"
+                    }),30000)
+                        .then(function(e){
+                            return e.json();
+                        })
+                        .then(function(json){
+                            if(handleFun && handleFun!=""){
+                                json =  handleFun(json);
+                            }
+                            if(receive && receive!=""){
+                                return dispatch(receive(path,json));
+                            }
+                        })
+                        .catch(error => {
+                            return dispatch(receive(path,ToolClass.errorHandel(error)));
+                        })
+                }else {
+                    return $.ajax({
+                        type:"GET",
+                        url: url,
+                        timeout : 30000,
+                        success: function(res){
+                            if(handleFun && handleFun!=""){
+                                res =  handleFun(res);
+                            }
+                            return dispatch(receive(path,res));
+                        },
+                        error:function (error) {
+                            return dispatch(receive(path,ToolClass.errorHandel(error)));
                         }
-                        if(receive && receive!=""){
-                            return dispatch(receive(path,json));
-                        }
-                    })
-                    .catch(error => {
-                        return dispatch(receive(path,ToolClass.errorHandel(error)));
-                    })
+                    });
+                }
             };
             break;
         case "POST":
@@ -34,50 +51,85 @@ ToolClass.lanPath = (url,path,method,request,receive,handleFun,postType,postData
                 let data=ToolClass.formData(postData);
                 return dispatch => {
                     dispatch(request(postData));
-                    return ToolClass._fetch(fetch(url,{
-                        method: "POST",
-                        mode: "cors",
-                        body:data
-                    }),30000)
-                        .then(function(e){
-                            return e.json();
-                        })
-                        .then(function(json){
-                            if(handleFun && handleFun!=""){
-                                json =  handleFun(json);
+                    if(!self.__disableNativeFetch && self.fetch) {
+                        return ToolClass._fetch(fetch(url,{
+                            method: "POST",
+                            mode: "cors",
+                            body:data
+                        }),30000)
+                            .then(function(e){
+                                return e.json();
+                            })
+                            .then(function(json){
+                                if(handleFun && handleFun!=""){
+                                    json =  handleFun(json);
+                                }
+                                if(receive && receive!=""){
+                                    return dispatch(receive(path,json));
+                                }
+                            })
+                            .catch(error => {
+                                return dispatch(receive(path,ToolClass.errorHandel(error)));
+                            })
+                    }else {
+                        return $.ajax({
+                            type:"POST",
+                            url: url,
+                            timeout : 30000,
+                            data:postData,
+                            success: function(res){
+                                if(handleFun && handleFun!=""){
+                                    res =  handleFun(res);
+                                }
+                                return dispatch(receive(path,res));
+                            },
+                            error:function (error) {
+                                return dispatch(receive(path,ToolClass.errorHandel(error)));
                             }
-                            if(receive && receive!=""){
-                                return dispatch(receive(path,json));
-                            }
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            return dispatch(receive(path,ToolClass.errorHandel(error)));
-                        })
+                        });
+                    }
                 }
             }else if(postType=="paramType"){
                 let data=ToolClass.paramType(postData);
-                url = url + data;
                 return dispatch => {
-                    dispatch(request(path));
-                    return ToolClass._fetch(fetch(url,{
-                        method: "POST",
-                        mode: "cors",
-                    }),30000)
-                        .then(function(e){
-                            return e.json();
-                        })
-                        .then(function(json){
-                            if(handleFun && handleFun!=""){
-                                json =  handleFun(json);
+                    url = url + data;
+                    dispatch(request(postData));
+                    if(!self.__disableNativeFetch && self.fetch) {
+                        return Tool._fetch(fetch(url,{
+                            method: "POST",
+                            mode: "cors",
+                        }),30000)
+                            .then(function(e){
+                                return e.json();
+                            })
+                            .then(function(json){
+                                if(handleFun && handleFun!=""){
+                                    json =  handleFun(json);
+                                }
+                                if(receive && receive!=""){
+                                    return dispatch(receive(path,json));
+                                }
+                            })
+                            .catch(error => {
+                                return dispatch(receive(path,Tool.errorHandel(error)));
+                            })
+                    }else {
+                        return $.ajax({
+                            type:"POST",
+                            timeout : 30000,
+                            url: url,
+                            data:postData,
+                            success: function(res){
+                                if(handleFun && handleFun!=""){
+                                    res =  handleFun(res);
+                                }
+                                return dispatch(receive(path,res));
+                            },
+                            error:function (error) {
+                                return dispatch(receive(path,ToolClass.errorHandel(error)));
                             }
-                            if(receive && receive!=""){
-                                return dispatch(receive(path,json));
-                            }
-                        })
-                        .catch(error => {
-                            return dispatch(receive(path,ToolClass.errorHandel(error)));
-                        })
+                        });
+                    }
                 }
             }
             break;
@@ -244,36 +296,35 @@ ToolClass.formatDate=(date)=> {
 
 /**
  输入框格式处理 type 1：正整数 2：2位小数 3：中文 数字 字母 #  4：中文 数字 字母  5：字母 6：中文 7：字母 数字 8：中文 字母
- 9：中文 数字
  **/
-ToolClass.matchInput=(str,type)=>{
+Tool.matchInput=(str,type)=>{
     let temp_str = str;
     switch (type){
         case "1":
-            if(temp_str.toString().match('^[0-9]*$')!=null){
+            if(temp_str.toString().match('^[0-9]*$')!=null){ //纯数字
                 return Trim(temp_str);
             }
             break;
         case "2":
-            if(temp_str.match('^[0-9]+([.]{1}[0-9]{1,2})?$')!=null){
+            if(temp_str.match('^[0-9]+([.]{1}[0-9]{1,2})?$')!=null){  //一位或两位小数
                 return Trim(temp_str);
             }
             if(temp_str.toString().substr(temp_str.length-1,1)=="."){
-                if(temp_str.toString().split(".").length<2){
+                if(temp_str.toString().split(".").length<=2){
                     return Trim(temp_str);
                 }
             }
             break;
         case "3":
             if(temp_str.toString().split("#").length<2){
-                if(temp_str.toString().match('^[\u4E00-\u9FA5A-Za-z0-9]+$')!=null){
+                if(temp_str.toString().match('[a-zA-Z\u4E00-\u9FA50-9]+$')!=null){ //匹配居住地址
                     return Trim(temp_str);
                 }
             }else {
                 let temp_arr = temp_str.toString().split("#");
                 let flag = true;
                 for(let i=0;i<temp_arr.length-1;i++){
-                    if(temp_arr[i].toString().match('^[\u4E00-\u9FA5A-Za-z0-9]+$')==null){
+                    if(temp_arr[i].toString().match('[a-zA-Z\u4E00-\u9FA50-9]+$')==null){
                         flag = false;
                     }
                 }
@@ -283,32 +334,27 @@ ToolClass.matchInput=(str,type)=>{
             }
             break;
         case "4":
-            if(temp_str.toString().match('^[\u4E00-\u9FA5A-Za-z0-9]+$')!=null){
+            if(temp_str.toString().match('[a-zA-Z\u4E00-\u9FA50-9]+$')!=null){ //匹配汉字，数字，英文
                 return Trim(temp_str);
             }
             break;
         case "5":
-            if(temp_str.toString().match('^[A-Za-z]+$')!=null){
+            if(temp_str.toString().match('^[A-Za-z]+$')!=null){ //匹配英文
                 return Trim(temp_str);
             }
             break;
         case "6":
-            if(temp_str.toString().match('^[\u4e00-\u9fa5]{0,}$')!=null){
+            if(temp_str.toString().match('[a-zA-Z\u4e00-\u9fa5]+$')!=null){//匹配汉字，英文
                 return Trim(temp_str);
             }
             break;
         case "7":
-            if(temp_str.toString().match('^[A-Za-z0-9]+$')!=null){
+            if(temp_str.toString().match('^[A-Za-z0-9]+$')!=null){//匹配数字，英文
                 return Trim(temp_str);
             }
             break;
         case "8":
-            if(temp_str.toString().match('^[\u4E00-\u9FA5A-Za-z]+$')!=null){
-                return Trim(temp_str);
-            }
-            break;
-        case "9":
-            if(temp_str.toString().match('^[\u4E00-\u9FA50-9]+$')!=null){
+            if(temp_str.toString().match('[a-zA-Z\u4e00-\u9fa5]+$')!=null){//匹配汉字，英文
                 return Trim(temp_str);
             }
             break;
@@ -318,7 +364,6 @@ ToolClass.matchInput=(str,type)=>{
     if(temp_str==""){
         return temp_str;
     }
-
 };
 
 function Trim(str)
